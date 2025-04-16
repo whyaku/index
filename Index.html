@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>羽毛球费用分摊计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 18px;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background: #07C160;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>羽毛球费用分摊计算器</h1>
+    <div class="input-group">
+        <label>场地时长（小时）</label>
+        <input type="number" id="hours" placeholder="请输入小时" step="0.5" min="0">
+    </div>
+    <div class="input-group">
+        <label>羽毛球数量（颗）</label>
+        <input type="number" id="balls" placeholder="请输入数量" min="0">
+    </div>
+    <div class="input-group">
+        <label>男性人数</label>
+        <input type="number" id="males" placeholder="请输入人数" min="0">
+    </div>
+    <div class="input-group">
+        <label>女性人数</label>
+        <input type="number" id="females" placeholder="请输入人数" min="0">
+    </div>
+    <button onclick="calculate()">计算</button>
+    <div class="result" id="result"></div>
+
+    <script>
+        function calculate() {
+            const hours = parseFloat(document.getElementById('hours').value) || 0;
+            const balls = parseInt(document.getElementById('balls').value) || 0;
+            const males = parseInt(document.getElementById('males').value) || 0;
+            const females = parseInt(document.getElementById('females').value) || 0;
+
+            // 计算总费用
+            const total = 42 * hours + 8.5 * balls;
+            
+            // 计算分摊
+            const maleShare = (total + 4 * females) / (males + females);
+            const femaleShare = maleShare - 4;
+            
+            // 四舍五入
+            const maleRounded = Math.round(maleShare);
+            const femaleRounded = Math.round(femaleShare);
+            const totalRounded = males * maleRounded + females * femaleRounded;
+            const difference = totalRounded - total;
+            
+            // 调整建议
+            let adjustmentMessage = "";
+            if (difference === 0) {
+                adjustmentMessage = "四舍五入后无差异，无需调整。";
+            } else if (difference > 0) {
+                adjustmentMessage = `多收了 ${difference.toFixed(2)} 元，建议最后一个人少付 ${difference.toFixed(2)} 元。`;
+            } else {
+                adjustmentMessage = `少收了 ${Math.abs(difference).toFixed(2)} 元，建议最后一个人多付 ${Math.abs(difference).toFixed(2)} 元。`;
+            }
+            
+            // 显示结果
+            document.getElementById('result').innerHTML = `
+                <p><strong>总费用</strong>: ${total.toFixed(2)} 元</p>
+                <p><strong>男性分摊（原始/四舍五入）</strong>: ${maleShare.toFixed(2)} / ${maleRounded} 元</p>
+                <p><strong>女性分摊（原始/四舍五入）</strong>: ${femaleShare.toFixed(2)} / ${femaleRounded} 元</p>
+                <p><strong>四舍五入后总费用</strong>: ${totalRounded} 元</p>
+                <p><strong>差异</strong>: ${difference.toFixed(2)} 元</p>
+                <p><strong>调整建议</strong>: ${adjustmentMessage}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
